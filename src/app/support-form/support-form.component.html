@@ -1,0 +1,76 @@
+<div class="form-component-container">
+  <div class="support-form-column">
+    <app-airtable-api-settings></app-airtable-api-settings>
+
+    <mat-card class="panel-margin">
+      <form [formGroup]="supportForm" #formDirective="ngForm">
+      <mat-card-header>
+        <mat-card-title>Humanitarian aid giving form</mat-card-title>
+        <div class="flex-spacer"></div>
+        <mat-toolbar class="form-header-toolbar transparent-mat-form-field">
+          <mat-toolbar-row>
+            <mat-form-field>
+              <mat-label>Support Date</mat-label>
+              <input matInput aria-label="Support Date" [formControl]="supportDateFC" [matDatepicker]="supportDatePicker">
+              <mat-hint>DD/MM/YYYY</mat-hint>
+              <mat-datepicker-toggle matIconSuffix [for]="supportDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #supportDatePicker></mat-datepicker>
+            </mat-form-field>
+          </mat-toolbar-row>
+          <mat-toolbar-row>
+            <mat-form-field>
+              <mat-label>Refugee Name</mat-label>
+              <input matInput aria-label="Refugee Name" type="text" [matAutocomplete]="autocompleteRefugeeByName" [formControl]="refugeeFC">
+              <mat-autocomplete #autocompleteRefugeeByName="matAutocomplete" [displayWith]="displayRefugeeName">
+                @for (refugeeOption of refugeeOptions | async; track refugeeOption.id; let i = $index) {
+                <mat-option [value]="refugeeOption">
+                  <span>{{refugeeOption.fields.Name}} ({{refugeeOption.fields.DOB}})</span>
+                </mat-option>
+                }
+              </mat-autocomplete>
+              @if (refugeeFCSpinner) {
+                <mat-spinner matSuffix class="form-field-progress-spinner"></mat-spinner>
+              }
+              <mat-error>Search and choose an option</mat-error>
+            </mat-form-field>
+          </mat-toolbar-row>
+        </mat-toolbar>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-divider></mat-divider>
+        <mat-toolbar>
+          @for (goodEntryFG of goodEntriesFA.controls; track goodEntryFG; let i = $index) {
+            <mat-toolbar-row>
+              <app-support-good-entry style="width: 100%" class="transparent-mat-form-field" [searchGoodEntryIndexById]="searchGoodEntryIndexById" [index]="i" [formGroup]="goodEntryFG"
+              (enter)="submitGoodEntry($event)" (remove)="removeGoodEntry($event)"></app-support-good-entry>
+            </mat-toolbar-row>
+          }
+          <mat-toolbar-row>
+            <button mat-raised-button (click)="addGoodEntrySlot()">Add Good Line</button>
+          </mat-toolbar-row>
+        </mat-toolbar>
+      </mat-card-content>
+      <mat-divider></mat-divider>
+      <div class="progress-bar-container">
+        @if (supportFormSendingProgressBar) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+      </div>
+      <mat-card-actions>
+        <mat-toolbar>
+          <button mat-flat-button (click)="submitForm()" [disabled]="supportFormSendingProgressBar || supportForm.pristine">SUBMIT</button>
+          <span class="flex-spacer"></span>
+          <button mat-stroked-button (click)="resetForm(formDirective)">RESET</button>
+          <button mat-button color="accent" (click)="createHotButtonMacro()">Create Macro >></button>
+        </mat-toolbar>
+      </mat-card-actions>
+      </form>
+    </mat-card>
+  </div>
+
+  <div class="hot-button-panel-column">
+    <app-hot-button-panel (hotButtonClick)="hotButtonClick($event)" [addMacroFrom]="hotButtonMacro"></app-hot-button-panel>
+  </div>
+
+</div>
+

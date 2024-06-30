@@ -1,0 +1,35 @@
+<div [formGroup]="goodEntryFormGroup" class="flex-row">
+  <mat-form-field class="flex-spacer">
+    <mat-label>Good ID Name</mat-label>
+    <input matInput aria-label="Good ID Name" type="text" [matAutocomplete]="autocompleteGoodByName" [formControl]="goodFC" (keyup.enter)="goodEntryFormEnter()">
+      @if (goodFC.invalid) {
+        <mat-error>{{goodFC.getError('good')}}</mat-error>
+      }
+    <mat-autocomplete #autocompleteGoodByName="matAutocomplete" [displayWith]="displayGoodName" (optionSelected)="goodEntryFormEnter()">
+      @for (goodOption of goodOptions | async; track goodOption.id; let i = $index) {
+      <mat-option [value]="goodOption">
+        <span>{{goodOption.fields.ID_name}}</span>
+      </mat-option>
+      }
+    </mat-autocomplete>
+    @if (goodFCSpinner) {
+    <mat-spinner matSuffix class="form-field-progress-spinner"></mat-spinner>
+    }
+  </mat-form-field>
+  <mat-form-field class="number-field">
+    <button matPrefix mat-icon-button (click)="minusOne()">
+      <mat-icon>remove</mat-icon>
+    </button>
+    <mat-label>quantity</mat-label>
+    <input matInput style="text-align: center" value="1" [formControl]="quantityFC" (keyup.enter)="goodEntryFormEnter()">
+    @if (quantityFC.invalid) {
+    <mat-error>{{quantityFC.errors | json}}</mat-error>
+    }
+    <button matSuffix mat-icon-button (click)="plusOne()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-form-field>
+  <button class="remove-button" mat-icon-button (click)="clickRemoveEntry()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

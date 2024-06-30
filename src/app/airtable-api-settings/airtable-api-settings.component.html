@@ -1,0 +1,42 @@
+<mat-expansion-panel [expanded]="headerExpanded">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>account_circle</mat-icon>&nbsp;{{userId ? userId : 'Input your Airtable Personal Access Token'}}
+    </mat-panel-title>
+    @if (userId) {
+    <mat-panel-description>
+      <mat-icon>storage</mat-icon>&nbsp;{{database ? database.name : 'Please choose database'}}
+    </mat-panel-description>
+    }
+  </mat-expansion-panel-header>
+
+  <mat-toolbar class="header-toolbar">
+    <div>
+      <mat-form-field appearance="outline" class="form-field-attach-button">
+        <mat-label>Personal access token</mat-label>
+        <input matInput type="password" [(ngModel)]="token" (keyup.enter)="submitAuthToken()" [errorStateMatcher]="authErrorStateMatcher">
+        <mat-hint>{{userId ? 'Current User: ' + userId : ''}}</mat-hint>
+        <mat-error>{{authErrorMessage}}</mat-error>
+      </mat-form-field>
+      <button mat-stroked-button class="attached-button" (click)="submitAuthToken()">Submit</button>
+    </div>
+    <span class="flex-spacer"></span>
+    <mat-form-field appearance="outline">
+      <mat-label>Airtable database</mat-label>
+      <mat-select [(ngModel)]="database" required="true" [disabled]="!userId || !!authErrorMessage" (selectionChange)="databaseSelected($event)">
+        <mat-option>--</mat-option>
+        @for (base of databaseOptions; track base.id) {
+        <mat-option [value]="base">{{base.name}}</mat-option>
+        }
+      </mat-select>
+      <mat-hint>Database id: {{database?.id}}</mat-hint>
+      <mat-error>Please choose Database</mat-error>
+    </mat-form-field>
+    <mat-checkbox (change)="toggleCommaToDotTranslation($event)" checked = "true"
+                  matTooltip='For example: "0,5" will be searched as "0.5"'
+                  [matTooltipShowDelay]="1000">Use "," as "." in search</mat-checkbox>
+    <span class="flex-spacer"></span>
+  </mat-toolbar>
+</mat-expansion-panel>
+
+

@@ -1,0 +1,38 @@
+.form-component-container {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.support-form-column {
+  flex-grow: 7;
+  margin: 0 10px;
+}
+
+.hot-button-panel-column {
+  flex-grow: 3;
+  margin-right: 10px;
+  min-width: 30%;
+  width: min-content
+}
+
+.form-header-toolbar {
+  flex: 0 0 fit-content;
+  min-width: 35%;
+}
+
+mat-toolbar-row {
+  height: auto;
+  min-height: var(--mat-toolbar-standard-height);
+}
+
+.form-header-toolbar > mat-toolbar-row > mat-form-field {
+  width: 100%;
+}
+
+.transparent-mat-form-field {
+  --mdc-filled-text-field-container-color: initial;
+}
+
+.progress-bar-container {
+  min-height: max(var(--mdc-linear-progress-track-height), var(--mdc-linear-progress-active-indicator-height));
+}

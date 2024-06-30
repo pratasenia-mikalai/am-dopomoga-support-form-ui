@@ -1,0 +1,94 @@
+<mat-expansion-panel (opened)="toggleEditMode(true)" (closed)="toggleEditMode(false)">
+  <mat-expansion-panel-header>
+    <mat-panel-title>Hot Buttons</mat-panel-title>
+    <mat-panel-description>{{databaseId ? 'expand to edit' : 'Please choose database'}}</mat-panel-description>
+  </mat-expansion-panel-header>
+  <mat-toolbar class="header-toolbar">
+    <div>
+      <mat-form-field appearance="outline" class="form-field-attach-button">
+        <mat-label>Good ID Name</mat-label>
+        <input matInput aria-label="Good ID Name" type="text" [matAutocomplete]="autocompleteGoodByName" [formControl]="goodFC" (keyup.enter)="addHotButton()">
+        <mat-hint>Search Good to add it as a Hot Button</mat-hint>
+        <mat-error>{{goodFC.getError('good')}}</mat-error>
+        @if (goodFCSpinner) {
+          <mat-spinner matSuffix class="form-field-progress-spinner"></mat-spinner>
+        }
+        <mat-autocomplete #autocompleteGoodByName="matAutocomplete" [displayWith]="displayGoodName">
+          @for (goodOption of goodOptions | async; track goodOption.id; let i = $index) {
+          <mat-option [value]="goodOption">
+             <span>{{goodOption.fields.ID_name}}</span>
+             </mat-option>
+          }
+          </mat-autocomplete>
+        </mat-form-field>
+        <button mat-stroked-button class="attached-button" [disabled]="!databaseId || !editMode" (click)="addHotButton()">Add</button>
+    </div>
+    <span class="flex-spacer"></span>
+    <button mat-flat-button [disabled]="!databaseId" (click)="saveHotButtonsPanel()">Save</button>
+    <button mat-stroked-button [disabled]="!databaseId" (click)="loadHotButtonsPanel()">Load</button>
+  </mat-toolbar>
+</mat-expansion-panel>
+
+<div class="panel-margin" cdkDropListGroup #hotButtonsPanel>
+  @for (hotButtonRow of hotButtons; track hotButtonRow.id; let arrI = $index) {
+
+  <div class="grid" cdkDropList [cdkDropListData]="hotButtonRow.row" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+
+  @for (hotButton of hotButtonRow.row; track hotButton.id; let i = $index) {
+
+  <div class="grid-cell" cdkDrag [cdkDragDisabled]="!editMode || hotButton.isDummy()">
+    <mat-card class="hot-button" [class]="hotButton.isDummy() ? 'dummy': ''">
+      @switch (hotButton.type) {
+        @case (1) {
+          <button mat-button color="primary" class="hot-button" [disabled]="editMode" (click)="clickHotButton(hotButton)">
+            {{hotButton!.entries[0]!.good.fields.ID_name}}
+          </button>
+        }
+        @case (2) {
+          <button mat-flat-button color="accent" class="hot-button macro" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
+                  [disabled]="editMode" (click)="clickHotButton(hotButton)"
+                  (mouseover)="showMacroTooltip(hotButton.id)" (mouseleave)="hideMacroTooltip(hotButton.id)">
+
+            <table class="macro-table">
+              @for (entry of hotButton.entries | slice:0:3; track entry.good.id) {
+              <tr>
+                <td class="macro-table-cell">{{entry.good.fields.ID_name}}</td>
+                <td class="macro-table-cell">{{entry.quantity}}</td>
+              </tr>
+              }
+              @if (hotButton.entries.length > 3) {
+              <tr>
+                 <td class="macro-table-cell">...</td>
+              </tr>
+              }
+            </table>
+          </button>
+
+          <ng-template cdkConnectedOverlay
+            [cdkConnectedOverlayPositions]="macroTooltipPositionStrategy"
+            [cdkConnectedOverlayOrigin]="trigger"
+            [cdkConnectedOverlayOpen]="macroTooltipsShow[hotButton.id]">
+            <table class="macro-table-tooltip">
+              @for (entry of hotButton.entries; track entry.good.id) {
+              <tr>
+                <td>{{entry.good.fields.ID_name}}</td>
+                <td>{{entry.quantity}}</td>
+              </tr>
+              }
+            </table>
+          </ng-template>
+        }
+      }
+      @if (editMode) {
+      <mat-card-actions align="end">
+        <button mat-icon-button (click)="removeHotButton(arrI, i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+      }
+    </mat-card>
+  </div>
+  }
+</div>
+  }
+</div>

@@ -1,0 +1,37 @@
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.panel-margin {
+  margin-top: 10px;
+}
+
+.mat-toolbar.header-toolbar {
+  align-items: baseline;
+}
+
+.flex-spacer {
+  flex: 1 1 auto;
+}
+
+.form-field-progress-spinner {
+  max-height: calc(var(--mat-form-field-container-height) * 0.75);
+  max-width: var(--mat-form-field-container-height);
+}
+
+button.attached-button {
+  height: var(--mat-form-field-container-height);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0;
+}
+
+.form-field-attach-button .mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__trailing {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.number-field div.mat-mdc-form-field-infix {
+  width: calc(var(--mat-form-field-container-text-size) * 3);
+  font-size: calc(var(--mat-form-field-container-text-size) * 1.5);
+  max-height: var(--mat-form-field-container-text-line-height);
+}
