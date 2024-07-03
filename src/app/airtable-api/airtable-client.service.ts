@@ -1,6 +1,6 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {catchError, map, Observable, of} from "rxjs";
+import {catchError, forkJoin, map, Observable, of} from "rxjs";
 import {_API_ROOT} from "../app.config";
 import {
   AirtableEntity,
@@ -10,7 +10,7 @@ import {
   Good,
   Refugee,
   Support,
-  Minus
+  Minus, AirtableRequestEntity
 } from "../model";
 
 @Injectable({
@@ -65,7 +65,23 @@ export class AirtableClientService {
         map(it => it.records))
   }
 
-  createMinus(request: AirtableCreateEntityRequest<Minus>) {
+  createMinuses(minuses: AirtableRequestEntity<Minus>[]): Observable<never[] | AirtableEntity<Minus>[]> {
+    if (!this.airtableDatabase()) return of([])
+
+    const chunks: AirtableRequestEntity<Minus>[][] = minuses.reduce((result: AirtableRequestEntity<Minus>[][], _, index) =>
+      (index % 10 === 0 ? [...result, minuses.slice(index, index + 10)] : result), []);
+
+    const requestObservables = chunks.map(it => this.requestCreateMinuses(new AirtableCreateEntityRequest<Minus>(it)))
+
+    return forkJoin(requestObservables).pipe(
+      map(it => it.reduce(
+        (result: AirtableEntity<Minus>[], value: AirtableEntity<Minus>[], index: number) => result.concat(value),
+        []
+        ))
+    )
+  }
+
+  private requestCreateMinuses(request: AirtableCreateEntityRequest<Minus>) {
     if (!this.airtableDatabase()) return of([])
 
     return this.http.post<AirtableEntityResponse<Minus>>(`${this.apiUrl()}/Minus`, request)

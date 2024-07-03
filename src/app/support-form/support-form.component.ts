@@ -250,7 +250,7 @@ export class SupportFormComponent implements OnInit {
       return
     }
 
-    const minus: AirtableRequestEntity<Minus>[] = this.goodEntriesFA.controls
+    const minuses: AirtableRequestEntity<Minus>[] = this.goodEntriesFA.controls
       .filter(it => it.get("good")?.value && it.get("good")?.value.id !== "")
       .map(it => new AirtableRequestEntity<Minus>(
         new Minus(
@@ -260,11 +260,11 @@ export class SupportFormComponent implements OnInit {
         )
       ))
 
-    const minusSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiClient.createMinus(new AirtableCreateEntityRequest<Minus>(minus))
+    const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiClient.createMinuses(minuses)
       .pipe(catchError(err => of([])))
     )
 
-    if (minusSaved.length > 0) {
+    if (minusesSaved.length > 0) {
       this.supportForm.markAsPristine()
       this.snackBar.open("Form Successfully Submitted!", "OK", {duration: 5000})
     }
