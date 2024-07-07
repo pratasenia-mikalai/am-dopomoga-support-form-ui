@@ -11,7 +11,7 @@
   </mat-expansion-panel-header>
 
   <mat-toolbar class="header-toolbar">
-    <div>
+    <div class="display-flex">
       <mat-form-field appearance="outline" class="form-field-attach-button">
         <mat-label>Personal access token</mat-label>
         <input matInput type="password" [(ngModel)]="token" (keyup.enter)="submitAuthToken()" [errorStateMatcher]="authErrorStateMatcher">

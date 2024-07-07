@@ -4,7 +4,7 @@
     <mat-panel-description>{{databaseId ? 'expand to edit' : 'Please choose database'}}</mat-panel-description>
   </mat-expansion-panel-header>
   <mat-toolbar class="header-toolbar">
-    <div>
+    <div class="display-flex">
       <mat-form-field appearance="outline" class="form-field-attach-button">
         <mat-label>Good ID Name</mat-label>
         <input matInput aria-label="Good ID Name" type="text" [matAutocomplete]="autocompleteGoodByName" [formControl]="goodFC" (keyup.enter)="addHotButton()">

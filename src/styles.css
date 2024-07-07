@@ -9,6 +9,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items: baseline;
 }
 
+.display-flex {
+  display: flex;
+}
+
 .flex-spacer {
   flex: 1 1 auto;
 }
