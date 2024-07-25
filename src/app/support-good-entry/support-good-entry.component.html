@@ -21,7 +21,7 @@
       <mat-icon>remove</mat-icon>
     </button>
     <mat-label>quantity</mat-label>
-    <input matInput style="text-align: center" value="1" [formControl]="quantityFC" (keyup.enter)="goodEntryFormEnter()">
+    <input matInput type="number" style="text-align: center" value="1" [formControl]="quantityFC" (keyup.enter)="goodEntryFormEnter()">
     @if (quantityFC.invalid) {
     <mat-error>{{quantityFC.errors | json}}</mat-error>
     }

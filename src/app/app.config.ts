@@ -14,7 +14,6 @@ import {
 import {AuthService} from "./airtable-api/auth.service";
 import {catchError, Observable, throwError} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {AirtableEntity, Good} from "./model";
 
 export const _DATE_FORMAT = {
   parse: {

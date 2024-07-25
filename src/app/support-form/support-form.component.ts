@@ -54,7 +54,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 @Component({
   selector: 'app-support-form',
   standalone: true,
-  providers: [provideMomentDateAdapter(_DATE_FORMAT)],
+  providers: [provideMomentDateAdapter(_DATE_FORMAT, {useUtc: true})],
   imports: [
     MatCardModule,
     MatButtonModule,
