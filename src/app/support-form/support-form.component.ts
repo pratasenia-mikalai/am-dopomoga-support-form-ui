@@ -184,8 +184,10 @@ export class SupportFormComponent implements OnInit {
     }
   }
 
-  displayRefugeeName(refugee?: AirtableEntity<Refugee>): string {
-    return refugee?.fields?.Name ? refugee.fields.Name : '';
+  displayRefugee(refugee?: AirtableEntity<Refugee>): string {
+    const name = refugee?.fields?.Name ? refugee.fields.Name : '';
+    const dob = refugee?.fields?.DOB ? ` (${new Date(refugee!.fields!.DOB!).toLocaleDateString()})` : ''
+    return name + dob;
   }
 
   refugeeValidator(): ValidatorFn {

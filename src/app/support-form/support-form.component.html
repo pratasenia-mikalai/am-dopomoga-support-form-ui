@@ -21,10 +21,10 @@
             <mat-form-field>
               <mat-label>Refugee Name</mat-label>
               <input matInput aria-label="Refugee Name" type="text" [matAutocomplete]="autocompleteRefugeeByName" [formControl]="refugeeFC">
-              <mat-autocomplete #autocompleteRefugeeByName="matAutocomplete" [displayWith]="displayRefugeeName">
+              <mat-autocomplete #autocompleteRefugeeByName="matAutocomplete" [displayWith]="displayRefugee">
                 @for (refugeeOption of refugeeOptions | async; track refugeeOption.id; let i = $index) {
                 <mat-option [value]="refugeeOption">
-                  <span>{{refugeeOption.fields.Name}} ({{refugeeOption.fields.DOB}})</span>
+                  <span>{{displayRefugee(refugeeOption)}}</span>
                 </mat-option>
                 }
               </mat-autocomplete>
