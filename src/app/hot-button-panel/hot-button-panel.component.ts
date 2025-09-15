@@ -17,7 +17,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
 import {MatInputModule} from '@angular/material/input';
-import {AirtableClientService} from "../airtable-api/airtable-client.service";
+import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
 import {MatAutocomplete, MatAutocompleteModule, MatOption} from "@angular/material/autocomplete";
 import {AsyncPipe, SlicePipe} from "@angular/common";
 import {
@@ -113,9 +113,9 @@ export class HotButtonPanelComponent implements OnInit, AfterViewInit {
     },
   ]
 
-  constructor(private apiClient: AirtableClientService, private cdr: ChangeDetectorRef, private snackBar: MatSnackBar) {
+  constructor(private apiClient: AirtableClientReadService, private cdr: ChangeDetectorRef, private snackBar: MatSnackBar) {
     effect(() => {
-      this.databaseId = this.apiClient.airtableDatabase()?.id;
+      this.databaseId = this.apiClient.airtableGoodDatabase()?.id;
       this.loadHotButtonsPanel()
       this.refreshGoodFCDisabled()
     });

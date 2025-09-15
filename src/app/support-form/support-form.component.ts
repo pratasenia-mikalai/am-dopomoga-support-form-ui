@@ -46,10 +46,11 @@ import {SupportGoodEntryComponent} from "../support-good-entry/support-good-entr
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {HotButtonPanelComponent} from "../hot-button-panel/hot-button-panel.component";
 import {AirtableApiSettingsComponent} from "../airtable-api-settings/airtable-api-settings.component";
-import {AirtableClientService} from "../airtable-api/airtable-client.service";
+import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {AirtableClientWriteDefaultService} from "../airtable-api/airtable-client-write-default.service";
 
 @Component({
   selector: 'app-support-form',
@@ -96,7 +97,8 @@ export class SupportFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private apiClient: AirtableClientService,
+    private apiReadClient: AirtableClientReadService,
+    private apiWriteClient: AirtableClientWriteDefaultService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {
@@ -127,7 +129,7 @@ export class SupportFormComponent implements OnInit {
         this.refugeeFCSpinner = true;
         this.cdr.detectChanges()
       }),
-      switchMap(it => this.apiClient.searchRefugee(<string>it)
+      switchMap(it => this.apiReadClient.searchRefugee(<string>it)
         .pipe(tap(() => {
           this.refugeeFCSpinner = false;
           this.cdr.detectChanges()
@@ -240,7 +242,7 @@ export class SupportFormComponent implements OnInit {
 
     let supportSaved: AirtableEntity<Support> | undefined =
       await firstValueFrom(
-        this.apiClient.createSupport(new AirtableCreateEntityRequest<Support>([support]))
+        this.apiWriteClient.createSupport(new AirtableCreateEntityRequest<Support>([support]))
           .pipe(
             catchError(err => of([])),
             map(it => it[0] ? it[0] : undefined)
@@ -262,7 +264,7 @@ export class SupportFormComponent implements OnInit {
         )
       ))
 
-    const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiClient.createMinuses(minuses)
+    const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiWriteClient.createMinuses(minuses)
       .pipe(catchError(err => of([])))
     )
 

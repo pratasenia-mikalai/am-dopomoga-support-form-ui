@@ -21,7 +21,7 @@ import {MatIcon} from "@angular/material/icon";
 import {AsyncPipe, JsonPipe} from "@angular/common"
 import {MatButtonModule} from "@angular/material/button";
 import {debounceTime, distinctUntilChanged, filter, Observable, of, Subscription, switchMap, tap} from "rxjs";
-import {AirtableClientService} from "../airtable-api/airtable-client.service";
+import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
@@ -62,7 +62,7 @@ export class SupportGoodEntryComponent implements OnInit, OnDestroy {
 
   quantityFC!: FormControl<number>
 
-  constructor(private apiClient: AirtableClientService, private cdr: ChangeDetectorRef,) {
+  constructor(private apiClient: AirtableClientReadService, private cdr: ChangeDetectorRef,) {
   }
 
   ngOnInit(): void {

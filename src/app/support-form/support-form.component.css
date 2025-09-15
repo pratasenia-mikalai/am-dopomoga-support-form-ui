@@ -17,7 +17,7 @@
 
 .form-header-toolbar {
   flex: 0 0 fit-content;
-  min-width: 35%;
+  min-width: 50%;
 }
 
 mat-toolbar-row {

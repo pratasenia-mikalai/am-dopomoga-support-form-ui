@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
-import {AirtableClientService} from "../airtable-api/airtable-client.service";
+import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
 import {AsyncPipe} from '@angular/common'
 import {AuthService} from "../airtable-api/auth.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -14,11 +14,12 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {AirtableClientWriteDefaultService} from "../airtable-api/airtable-client-write-default.service";
 
 @Component({
   selector: 'app-airtable-api-settings',
   standalone: true,
-  imports: [FormsModule, AsyncPipe, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule],
+  imports: [FormsModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule],
   templateUrl: './airtable-api-settings.component.html',
   styleUrl: './airtable-api-settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -37,7 +38,9 @@ export class AirtableApiSettingsComponent {
   databaseOptions: Base[] = []
   databaseOptionsSpinner: boolean = false
 
-  constructor(private apiClient: AirtableClientService, private authService: AuthService, private cdr: ChangeDetectorRef) {
+  constructor(private apiReadClient: AirtableClientReadService,
+              private apiWriteClient: AirtableClientWriteDefaultService,
+              private authService: AuthService, private cdr: ChangeDetectorRef) {
     const authErrorMessageProducer: () => string | undefined = () => {
       return this.authErrorMessage
     }
@@ -45,7 +48,7 @@ export class AirtableApiSettingsComponent {
   }
 
   toggleCommaToDotTranslation(event: any) {
-    this.apiClient.setTranslateCommaToDotInSearch(event.checked)
+    this.apiReadClient.setTranslateCommaToDotInSearch(event.checked)
   }
 
   submitAuthToken() {
@@ -87,7 +90,9 @@ export class AirtableApiSettingsComponent {
   }
 
   databaseSelected(event: any) {
-    this.apiClient.setDatabase(event.value)
+    this.apiReadClient.setGoodDatabase(event.value)
+    this.apiReadClient.setRefugeeDatabase(event.value)
+    this.apiWriteClient.setSupportDatabase(event.value)
     this.headerExpanded = false
   }
 }
