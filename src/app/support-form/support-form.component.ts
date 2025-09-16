@@ -7,41 +7,25 @@ import {
   FormArray,
   FormBuilder,
   FormControl,
-  FormGroup, FormGroupDirective,
+  FormGroup,
+  FormGroupDirective,
   FormsModule,
   ReactiveFormsModule,
-  ValidationErrors, ValidatorFn,
+  ValidationErrors,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {
-  AirtableCreateEntityRequest,
-  AirtableEntity,
-  AirtableRequestEntity,
-  Good,
-  HotButton,
-  HotButtonEntry, Minus,
-  Refugee,
-  Support
+  AirtableEntity, Good, GoodEntry, HotButton, HotButtonEntry, Refugee, SupportEntry, displayRefugeeNameWithDOB
 } from "../model";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {provideMomentDateAdapter} from "@angular/material-moment-adapter";
 import {_DATE_FORMAT} from "../app.config";
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  firstValueFrom,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap
-} from "rxjs";
-import {AsyncPipe} from '@angular/common'
+import {debounceTime, distinctUntilChanged, filter, Observable, of, switchMap, tap} from "rxjs";
+import {AsyncPipe, JsonPipe} from '@angular/common'
 import {SupportGoodEntryComponent} from "../support-good-entry/support-good-entry.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {HotButtonPanelComponent} from "../hot-button-panel/hot-button-panel.component";
@@ -50,7 +34,7 @@ import {AirtableClientReadService} from "../airtable-api/airtable-client-read.se
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {AirtableClientWriteDefaultService} from "../airtable-api/airtable-client-write-default.service";
+import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.service";
 
 @Component({
   selector: 'app-support-form',
@@ -84,6 +68,7 @@ export class SupportFormComponent implements OnInit {
     [Validators.required, this.refugeeValidator()]);
   refugeeOptions: Observable<AirtableEntity<Refugee>[]> = of([]);
   refugeeFCSpinner: boolean = false
+  defaultFamilySize?: number
 
   supportDateFC: FormControl<Date | null>  = new FormControl<Date | null>(null, [Validators.required]);
   goodEntriesFA: FormArray<FormGroup> = new FormArray<FormGroup>([], [this.goodArrayValidator()]);
@@ -92,13 +77,13 @@ export class SupportFormComponent implements OnInit {
   supportFormSendingProgressBar: boolean = false;
 
   searchGoodEntryIndexById: (id: string) => number;
-
+  displayRefugee: (refugee?: AirtableEntity<Refugee>) => string = displayRefugeeNameWithDOB
   hotButtonMacro?: HotButton;
 
   constructor(
     private formBuilder: FormBuilder,
     private apiReadClient: AirtableClientReadService,
-    private apiWriteClient: AirtableClientWriteDefaultService,
+    private apiWriteClient: AirtableClientWriteService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {
@@ -186,12 +171,6 @@ export class SupportFormComponent implements OnInit {
     }
   }
 
-  displayRefugee(refugee?: AirtableEntity<Refugee>): string {
-    const name = refugee?.fields?.Name ? refugee.fields.Name : '';
-    const dob = refugee?.fields?.DOB ? ` (${new Date(refugee!.fields!.DOB!).toLocaleDateString()})` : ''
-    return name + dob;
-  }
-
   refugeeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value || typeof control.value === "string") {
@@ -201,8 +180,9 @@ export class SupportFormComponent implements OnInit {
       if (!refugee.id || !refugee.fields || !refugee.fields.Name) {
         return {refugee: "Search and choose an option"}
       }
-      return null;
-    };
+      this.defaultFamilySize = refugee.fields["Family size"]
+      return null
+    }
   }
 
   goodArrayValidator(): ValidatorFn {
@@ -236,10 +216,21 @@ export class SupportFormComponent implements OnInit {
       return;
     }
 
-    const support: AirtableRequestEntity<Support> = new AirtableRequestEntity<Support>(
-      new Support([(<AirtableEntity<Refugee>>this.refugeeFC.value).id], this.supportDateFC.value!.toISOString().split("T", 1)[0])
+    const support: SupportEntry = new SupportEntry(
+      <AirtableEntity<Refugee>>this.refugeeFC.value,
+      this.supportDateFC.value!.toISOString().split("T", 1)[0]
     )
 
+    const goodEntries: GoodEntry[] = this.goodEntriesFA.controls
+      .filter(it => it.get("good")?.value && it.get("good")?.value.id !== "")
+      .map(it => new GoodEntry(
+          it.get("good")?.value as AirtableEntity<Good>,
+          it.get("quantity")!.value as number
+        )
+      )
+
+    const success: boolean = await this.apiWriteClient.saveSupport(support, goodEntries)
+    /*
     let supportSaved: AirtableEntity<Support> | undefined =
       await firstValueFrom(
         this.apiWriteClient.createSupport(new AirtableCreateEntityRequest<Support>([support]))
@@ -254,9 +245,9 @@ export class SupportFormComponent implements OnInit {
       return
     }
 
-    const minuses: AirtableRequestEntity<Minus>[] = this.goodEntriesFA.controls
+    const minuses: AirtableDraftEntity<Minus>[] = this.goodEntriesFA.controls
       .filter(it => it.get("good")?.value && it.get("good")?.value.id !== "")
-      .map(it => new AirtableRequestEntity<Minus>(
+      .map(it => new AirtableDraftEntity<Minus>(
         new Minus(
           [supportSaved.id],
           [(it.get("good")?.value as AirtableEntity<Good>).id],
@@ -267,8 +258,8 @@ export class SupportFormComponent implements OnInit {
     const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiWriteClient.createMinuses(minuses)
       .pipe(catchError(err => of([])))
     )
-
-    if (minusesSaved.length > 0) {
+*/
+    if (success) {
       this.supportForm.markAsPristine()
       this.snackBar.open("Form Successfully Submitted!", "OK", {duration: 5000})
     }

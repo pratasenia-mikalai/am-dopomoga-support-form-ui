@@ -2,7 +2,8 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {catchError, map, Observable, of} from "rxjs";
 import {_API_ROOT} from "../app.config";
-import {AirtableEntity, AirtableEntityResponse, Base, Good, Refugee} from "../model";
+import {AirtableEntity, Base, Good, Refugee} from "../model";
+import {AirtableEntityResponse} from "./model";
 
 @Injectable({
   providedIn: 'root'

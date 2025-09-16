@@ -11,12 +11,12 @@ export class Base {
 export interface Fields {
 }
 
-export class AirtableRequestEntity<T extends Fields> {
+export class AirtableDraftEntity<T extends Fields> {
   constructor(public readonly fields: T) {
   }
 }
 
-export class AirtableEntity<T extends Fields> extends AirtableRequestEntity<T>{
+export class AirtableEntity<T extends Fields> extends AirtableDraftEntity<T> {
   createdTime?: string
 
   constructor(fields: T, public readonly id: string = "") {
@@ -24,20 +24,11 @@ export class AirtableEntity<T extends Fields> extends AirtableRequestEntity<T>{
   }
 }
 
-export class AirtableCreateEntityRequest<T extends Fields> {
-  constructor(public records: AirtableRequestEntity<T>[] = []) {
-  }
-}
-
-export class AirtableEntityResponse<T extends Fields> {
-  records: AirtableEntity<T>[] = []
-}
-
 export class Refugee implements Fields {
   Name?: string
   Phone?: string
   DOB?: string
-  "ID Card"?: string
+  "Family size"?: number
 }
 
 export class Good implements Fields {
@@ -47,10 +38,28 @@ export class Good implements Fields {
   ID_name?: string
 }
 
+export class SupportEntry {
+  constructor(
+    public readonly who: AirtableEntity<Refugee>,
+    public readonly date: string,
+    public readonly familySize?: number
+  ) {
+  }
+}
+
+export class GoodEntry {
+  constructor(
+    public readonly good: AirtableEntity<Good>,
+    public readonly quantity: number
+  ) {
+  }
+}
+
 export class Support implements Fields {
   constructor(
     public readonly Who: string[], // array with ONE refugee Id inside
-    public readonly Date: string
+    public readonly Date: string,
+    public readonly Custom_family_size?: number
   ) {
   }
 }
@@ -75,13 +84,16 @@ export class HotButton {
 
   private refreshType() {
     switch (this.entries.length) {
-      case 0 : this.type = HotButtonType.Dummy; break;
+      case 0 :
+        this.type = HotButtonType.Dummy;
+        break;
       case 1: {
         if (this.entries[0].quantity > 1) this.type = HotButtonType.Macro;
         else this.type = HotButtonType.Single;
         break;
       }
-      default: this.type = HotButtonType.Macro;
+      default:
+        this.type = HotButtonType.Macro;
     }
   }
 
@@ -109,4 +121,10 @@ export class HotButtonEntry {
 
 export function displayGoodName(good?: AirtableEntity<Good>): string {
   return good?.fields?.ID_name ? good.fields.ID_name : "";
+}
+
+export function displayRefugeeNameWithDOB(refugee?: AirtableEntity<Refugee>): string {
+  const name = refugee?.fields?.Name ? refugee.fields.Name : '';
+  const dob = refugee?.fields?.DOB ? ` (${new Date(refugee!.fields!.DOB!).toLocaleDateString()})` : ''
+  return name + dob;
 }

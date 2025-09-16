@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
-import {AsyncPipe} from '@angular/common'
 import {AuthService} from "../airtable-api/auth.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatInputModule} from '@angular/material/input';
@@ -14,7 +13,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {AirtableClientWriteDefaultService} from "../airtable-api/airtable-client-write-default.service";
+import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.service";
 
 @Component({
   selector: 'app-airtable-api-settings',
@@ -39,7 +38,7 @@ export class AirtableApiSettingsComponent {
   databaseOptionsSpinner: boolean = false
 
   constructor(private apiReadClient: AirtableClientReadService,
-              private apiWriteClient: AirtableClientWriteDefaultService,
+              private apiWriteClient: AirtableClientWriteService,
               private authService: AuthService, private cdr: ChangeDetectorRef) {
     const authErrorMessageProducer: () => string | undefined = () => {
       return this.authErrorMessage
