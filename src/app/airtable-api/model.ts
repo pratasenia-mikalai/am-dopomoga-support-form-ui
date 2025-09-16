@@ -8,3 +8,7 @@ export class AirtableCreateEntityRequest<T extends Fields> {
 export class AirtableEntityResponse<T extends Fields> {
   records: AirtableEntity<T>[] = []
 }
+
+export enum SavingMode {
+  DEFAULT, DENORMALIZED
+}

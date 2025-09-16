@@ -42,7 +42,7 @@ export class SupportEntry {
   constructor(
     public readonly who: AirtableEntity<Refugee>,
     public readonly date: string,
-    public readonly familySize?: number
+    public readonly customFamilySize?: number
   ) {
   }
 }
@@ -69,6 +69,16 @@ export class Minus implements Fields {
     public readonly Support: string[], // array with ONE support Id inside
     public readonly Goods: string[], // array with ONE good Id inside
     public readonly _minus: number // quantity
+  ) {
+  }
+}
+
+export class SupportDenormalized implements Fields {
+  constructor(
+    public readonly Who: string,
+    public readonly Date: string,
+    public readonly Goods: string,
+    public readonly Family_Size?: number
   ) {
   }
 }

@@ -1,36 +1,72 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {
-  AirtableEntity,
   AirtableDraftEntity,
+  AirtableEntity,
   Base,
+  displayRefugeeNameWithDOB,
+  GoodEntry,
   Minus,
-  Support, GoodEntry, SupportEntry
+  Support,
+  SupportDenormalized,
+  SupportEntry
 } from "../model";
 import {_API_ROOT} from "../app.config";
-import {catchError, firstValueFrom, forkJoin, map, Observable, of} from "rxjs";
-import {AirtableCreateEntityRequest, AirtableEntityResponse} from "./model";
+import {catchError, firstValueFrom, forkJoin, lastValueFrom, map, Observable, of} from "rxjs";
+import {AirtableCreateEntityRequest, AirtableEntityResponse, SavingMode} from "./model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AirtableClientWriteService {
 
+  savingMode: SavingMode = SavingMode.DEFAULT
   airtableSupportDatabase: WritableSignal<Base | undefined> = signal(undefined);
 
   constructor(private http: HttpClient) { }
-
-  async saveSupport(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
-      return this.saveSupportDefault(supportEntry, goodEntries)
-  }
 
   private supportApiUrl(): string {
     return `${_API_ROOT}/${this.airtableSupportDatabase()?.id}`
   }
 
-  async saveSupportDefault(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
+  async saveSupport(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
+    switch (this.savingMode) {
+      case SavingMode.DEFAULT:
+        return this.saveSupportDefault(supportEntry, goodEntries)
+      case SavingMode.DENORMALIZED:
+        return this.saveSupportDenormalized(supportEntry, goodEntries)
+      default:
+        throw new Error("Saving Mode is not set up!")
+    }
+  }
+
+  private async saveSupportDenormalized(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
+    const goodsTextRowBuilder = (goodEntry: GoodEntry) =>
+      [goodEntry.good.fields.ID_name,
+        goodEntry.quantity,
+        goodEntry.good.fields["Weight 1 unit, kg"] ? (goodEntry.good.fields["Weight 1 unit, kg"] * goodEntry.quantity).toFixed(3) : 0
+      ].join(';')
+
+    const support: AirtableDraftEntity<SupportDenormalized> = new AirtableDraftEntity(
+      new SupportDenormalized(
+        displayRefugeeNameWithDOB(supportEntry.who),
+        supportEntry.date,
+        goodEntries.map(goodsTextRowBuilder).join('\n'),
+        supportEntry.customFamilySize ? supportEntry.customFamilySize : supportEntry.who.fields["Family size"]
+      )
+    )
+
+    return firstValueFrom(
+      this.createSupport(new AirtableCreateEntityRequest<SupportDenormalized>([support]))
+        .pipe(
+          catchError(err => of([])),
+          map(it => !!it[0])
+        ))
+  }
+
+  private async saveSupportDefault(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
     const support: AirtableDraftEntity<Support> = new AirtableDraftEntity(
-      new Support([supportEntry.who.id], supportEntry.date, supportEntry.familySize)
+      new Support([supportEntry.who.id], supportEntry.date, supportEntry.customFamilySize)
     )
 
     const supportSaved: AirtableEntity<Support> | undefined =
@@ -50,16 +86,18 @@ export class AirtableClientWriteService {
         new Minus([supportSaved.id], [it.good.id], it.quantity)
       ))
 
-    const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.createMinuses(minuses)
-      .pipe(catchError(err => of([])))
+    return lastValueFrom(this.createMinuses(minuses)
+        .pipe(
+          catchError(err => of([])),
+          map(it => it.length > 0)
+        )
     )
-    return minusesSaved.length > 0;
   }
 
-  private createSupport(request: AirtableCreateEntityRequest<Support>) {
+  private createSupport<T extends Support | SupportDenormalized>(request: AirtableCreateEntityRequest<T>) {
     if (!this.airtableSupportDatabase()) return of([])
 
-    return this.http.post<AirtableEntityResponse<Support>>(`${this.supportApiUrl()}/Support`, request)
+    return this.http.post<AirtableEntityResponse<T>>(`${this.supportApiUrl()}/Support`, request)
       .pipe(
         catchError(err => {
           console.log(err);

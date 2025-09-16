@@ -207,7 +207,7 @@ export class SupportFormComponent implements OnInit {
     };
   }
 
-  async submitForm() {
+  submitForm() {
     if (this.supportForm.pristine) {
       this.snackBar.open("Form is already sent. Change values to send another form.", "OK", {duration: 5000})
       return
@@ -244,15 +244,18 @@ export class SupportFormComponent implements OnInit {
         )
       )
 
-    const success: boolean = await this.apiWriteClient.saveSupport(support, goodEntries)
-
-    if (success) {
-      this.supportForm.markAsPristine()
-      this.snackBar.open("Form Successfully Submitted!", "OK", {duration: 5000})
-    }
-
-    this.supportFormSendingProgressBar = false
-    this.cdr.detectChanges()
+    this.apiWriteClient.saveSupport(support, goodEntries)
+      .then(success => {
+        if (success) {
+          this.supportForm.markAsPristine()
+          this.snackBar.open("Form Successfully Submitted!", "OK", {duration: 5000})
+        }
+      })
+      .catch(error => this.snackBar.open(error, "close", {duration: 5000}))
+      .finally(() => {
+        this.supportFormSendingProgressBar = false
+        this.cdr.detectChanges()
+      })
   }
 
   resetForm(formDirective: FormGroupDirective) {
