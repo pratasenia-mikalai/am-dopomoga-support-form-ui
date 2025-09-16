@@ -47,6 +47,15 @@
           }
           <mat-toolbar-row>
             <button mat-raised-button (click)="addGoodEntrySlot()">Add Good Line</button>
+            <span class="flex-spacer"></span>
+            <span class="field-container-text-size margin-05">Family size (* auto): </span>
+            <mat-form-field class="number-field transparent-mat-form-field">
+              <mat-label class="number-label">{{ displayDefaultFamilySize() }}</mat-label>
+              <input matInput type="number" style="text-align: center" [formControl]="familySizeFC">
+              @if (familySizeFC.invalid) {
+                <mat-error>{{familySizeFC.errors | json}}</mat-error>
+              }
+            </mat-form-field>
           </mat-toolbar-row>
         </mat-toolbar>
       </mat-card-content>
@@ -60,7 +69,7 @@
         <mat-toolbar>
           <button mat-flat-button (click)="submitForm()" [disabled]="supportFormSendingProgressBar || supportForm.pristine">SUBMIT</button>
           <span class="flex-spacer"></span>
-          <button mat-stroked-button (click)="resetForm(formDirective)">RESET</button>
+          <button class="margin-05" mat-stroked-button (click)="resetForm(formDirective)">RESET</button>
           <button mat-button color="accent" (click)="createHotButtonMacro()">Create Macro >></button>
         </mat-toolbar>
       </mat-card-actions>

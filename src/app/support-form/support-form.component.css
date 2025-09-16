@@ -36,3 +36,5 @@ mat-toolbar-row {
 .progress-bar-container {
   min-height: max(var(--mdc-linear-progress-track-height), var(--mdc-linear-progress-active-indicator-height));
 }
+
+

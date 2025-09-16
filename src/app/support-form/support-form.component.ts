@@ -56,7 +56,8 @@ import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.
     HotButtonPanelComponent,
     AirtableApiSettingsComponent,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    JsonPipe
   ],
   templateUrl: './support-form.component.html',
   styleUrl: './support-form.component.css',
@@ -68,10 +69,10 @@ export class SupportFormComponent implements OnInit {
     [Validators.required, this.refugeeValidator()]);
   refugeeOptions: Observable<AirtableEntity<Refugee>[]> = of([]);
   refugeeFCSpinner: boolean = false
-  defaultFamilySize?: number
 
   supportDateFC: FormControl<Date | null>  = new FormControl<Date | null>(null, [Validators.required]);
   goodEntriesFA: FormArray<FormGroup> = new FormArray<FormGroup>([], [this.goodArrayValidator()]);
+  familySizeFC: FormControl<number | null> = new FormControl<number | null>(null, [Validators.min(1), Validators.pattern(/^\d+$/)])
 
   supportForm: FormGroup;
   supportFormSendingProgressBar: boolean = false;
@@ -90,7 +91,8 @@ export class SupportFormComponent implements OnInit {
     this.supportForm = this.formBuilder.group({
       "refugee": this.refugeeFC,
       "supportDate": this.supportDateFC,
-      "goodEntries": this.goodEntriesFA
+      "goodEntries": this.goodEntriesFA,
+      "familySize": this.familySizeFC
     });
 
     const createSearchGoodEntryByIdFunction: ((goodEntriesFormArray: FormArray<FormGroup>) => (id: string) => number) =
@@ -180,9 +182,19 @@ export class SupportFormComponent implements OnInit {
       if (!refugee.id || !refugee.fields || !refugee.fields.Name) {
         return {refugee: "Search and choose an option"}
       }
-      this.defaultFamilySize = refugee.fields["Family size"]
       return null
     }
+  }
+
+  displayDefaultFamilySize(): string {
+    if (!this.refugeeFC.value || typeof this.refugeeFC.value === "string") {
+      return '';
+    }
+    const refugeeFamilySize = this.refugeeFC.value.fields["Family size"]
+    if (refugeeFamilySize && (!this.familySizeFC.value || !this.familySizeFC.valid)) {
+      return refugeeFamilySize + '*'
+    }
+    return ''
   }
 
   goodArrayValidator(): ValidatorFn {
@@ -216,9 +228,12 @@ export class SupportFormComponent implements OnInit {
       return;
     }
 
+    const customFamilySize = this.familySizeFC.valid && this.familySizeFC.value ? this.familySizeFC.value : undefined
+
     const support: SupportEntry = new SupportEntry(
       <AirtableEntity<Refugee>>this.refugeeFC.value,
-      this.supportDateFC.value!.toISOString().split("T", 1)[0]
+      this.supportDateFC.value!.toISOString().split("T", 1)[0],
+      customFamilySize
     )
 
     const goodEntries: GoodEntry[] = this.goodEntriesFA.controls
@@ -230,35 +245,7 @@ export class SupportFormComponent implements OnInit {
       )
 
     const success: boolean = await this.apiWriteClient.saveSupport(support, goodEntries)
-    /*
-    let supportSaved: AirtableEntity<Support> | undefined =
-      await firstValueFrom(
-        this.apiWriteClient.createSupport(new AirtableCreateEntityRequest<Support>([support]))
-          .pipe(
-            catchError(err => of([])),
-            map(it => it[0] ? it[0] : undefined)
-          ))
 
-    if (!supportSaved) {
-      this.supportFormSendingProgressBar = false
-      this.cdr.detectChanges()
-      return
-    }
-
-    const minuses: AirtableDraftEntity<Minus>[] = this.goodEntriesFA.controls
-      .filter(it => it.get("good")?.value && it.get("good")?.value.id !== "")
-      .map(it => new AirtableDraftEntity<Minus>(
-        new Minus(
-          [supportSaved.id],
-          [(it.get("good")?.value as AirtableEntity<Good>).id],
-          it.get("quantity")!.value as number
-        )
-      ))
-
-    const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.apiWriteClient.createMinuses(minuses)
-      .pipe(catchError(err => of([])))
-    )
-*/
     if (success) {
       this.supportForm.markAsPristine()
       this.snackBar.open("Form Successfully Submitted!", "OK", {duration: 5000})

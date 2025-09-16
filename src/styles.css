@@ -17,6 +17,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   flex: 1 1 auto;
 }
 
+.field-container-text-size {
+  font-size: var(--mat-form-field-container-text-size);
+}
+
+.margin-05 {
+  margin: 0.5rem;
+}
+
 .form-field-progress-spinner {
   max-height: calc(var(--mat-form-field-container-height) * 0.75);
   max-width: var(--mat-form-field-container-height);
@@ -34,7 +42,7 @@ button.attached-button {
   border-bottom-right-radius: 0;
 }
 
-.number-field div.mat-mdc-form-field-infix {
+.number-field div.mat-mdc-form-field-infix, .number-label {
   width: calc(var(--mat-form-field-container-text-size) * 3);
   font-size: calc(var(--mat-form-field-container-text-size) * 1.5);
   max-height: var(--mat-form-field-container-text-line-height);

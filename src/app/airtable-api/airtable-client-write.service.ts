@@ -53,7 +53,7 @@ export class AirtableClientWriteService {
     const minusesSaved: AirtableEntity<Minus>[] = await firstValueFrom(this.createMinuses(minuses)
       .pipe(catchError(err => of([])))
     )
-    return true
+    return minusesSaved.length > 0;
   }
 
   private createSupport(request: AirtableCreateEntityRequest<Support>) {
