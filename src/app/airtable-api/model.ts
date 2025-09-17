@@ -10,5 +10,5 @@ export class AirtableEntityResponse<T extends Fields> {
 }
 
 export enum SavingMode {
-  DEFAULT = "DEFAULT", DENORMALIZED = "DENORMALIZED"
+  DEFAULT = "Default", DENORMALIZED = "Denormalized"
 }

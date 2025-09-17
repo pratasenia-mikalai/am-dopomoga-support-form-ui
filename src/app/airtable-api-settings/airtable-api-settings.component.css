@@ -1,1 +1,5 @@
-
+.flag-settings-block {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}

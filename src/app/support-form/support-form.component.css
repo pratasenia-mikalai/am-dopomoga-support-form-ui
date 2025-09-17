@@ -4,12 +4,14 @@
 }
 
 .support-form-column {
-  flex-grow: 7;
+  flex-grow: 6;
+  flex-basis: 60%;
   margin: 0 10px;
 }
 
 .hot-button-panel-column {
-  flex-grow: 3;
+  flex-grow: 4;
+  flex-basis: 40%;
   margin-right: 10px;
   min-width: 30%;
   width: min-content

@@ -26,7 +26,7 @@ import {SavingMode} from "../airtable-api/model";
 })
 export class AirtableApiSettingsComponent {
 
-  headerExpanded: boolean = true
+  headerExpanded: WritableSignal<boolean> = signal(true)
 
   token?: string
 
@@ -116,7 +116,7 @@ export class AirtableApiSettingsComponent {
         .forEach(key => this.databases[key].set(event.value))
     }
     if (this.checkDatabaseSet()) {
-      this.headerExpanded = false
+      this.headerExpanded.set(false)
     }
   }
 

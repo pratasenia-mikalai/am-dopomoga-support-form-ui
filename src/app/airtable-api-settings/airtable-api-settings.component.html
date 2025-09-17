@@ -1,76 +1,82 @@
-<mat-expansion-panel [expanded]="headerExpanded">
+<mat-expansion-panel [expanded]="headerExpanded()" (opened)="headerExpanded.set(true)" (closed)="headerExpanded.set(false)">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <mat-icon>account_circle</mat-icon>&nbsp;{{userId ? userId : 'Input your Airtable Personal Access Token'}}
+      <mat-icon>account_circle</mat-icon>&nbsp;{{ userId ? userId : 'Input your Airtable Personal Access Token' }}
     </mat-panel-title>
     @if (userId) {
-    <mat-panel-description>
-      <mat-icon>storage</mat-icon>&nbsp;{{checkDatabaseSet() ? databases['support']()?.name : 'Please choose database'}}
-    </mat-panel-description>
+      <mat-panel-description>
+        <mat-icon>storage
+        </mat-icon>&nbsp;{{ checkDatabaseSet() ? databases['support']()?.name : 'Please choose database' }}
+      </mat-panel-description>
     }
     <mat-panel-description style="align-self: end; max-width: fit-content">
-      Mode: {{ savingMode() }}
+      Saving mode: {{ savingMode() }}
     </mat-panel-description>
   </mat-expansion-panel-header>
 
-  <mat-toolbar class="header-toolbar">
-    <div class="display-flex">
-      <mat-form-field appearance="outline" class="form-field-attach-button">
-        <mat-label>Personal access token</mat-label>
-        <input matInput type="password" [(ngModel)]="token" (keyup.enter)="submitAuthToken()" [errorStateMatcher]="authErrorStateMatcher">
-        <mat-hint>{{userId ? 'Current User: ' + userId : ''}}</mat-hint>
-        <mat-error>{{authErrorMessage}}</mat-error>
-      </mat-form-field>
-      <button mat-stroked-button class="attached-button" (click)="submitAuthToken()">Submit</button>
-    </div>
-    <span class="flex-spacer"></span>
+  <div [style.display]="headerExpanded() ? 'initial' : 'none'">
+    <mat-toolbar>
+      <div>
+        <mat-form-field appearance="outline" class="form-field-attach-button">
+          <mat-label>Personal access token</mat-label>
+          <input matInput type="password" [(ngModel)]="token" (keyup.enter)="submitAuthToken()" [errorStateMatcher]="authErrorStateMatcher">
+          <mat-hint>{{ userId ? 'Current User: ' + userId : '' }}</mat-hint>
+          <mat-error>{{ authErrorMessage }}</mat-error>
+        </mat-form-field>
+        <button mat-stroked-button class="attached-button" (click)="submitAuthToken()">Submit</button>
+      </div>
+      <span class="flex-spacer"></span>
 
-    @if (savingMode() == SavingMode.DENORMALIZED) {
-    <mat-form-field appearance="outline">
-      <mat-label>Refugees database</mat-label>
-      <mat-select [(ngModel)]="databases['refugee']" required="true" [disabled]="!userId || !!authErrorMessage" (selectionChange)="databaseSelected($event)">
-        <mat-option>&#45;&#45;</mat-option>
-        @for (base of databaseOptions; track base.id) {
-          <mat-option [value]="base">{{base.name}}</mat-option>
-        }
-      </mat-select>
-      <mat-hint>Database id: {{databases['refugee']()?.id}}</mat-hint>
-      <mat-error>Please choose Database</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Goods database</mat-label>
-      <mat-select [(ngModel)]="databases['good']" required="true" [disabled]="!userId || !!authErrorMessage" (selectionChange)="databaseSelected($event)">
-        <mat-option>&#45;&#45;</mat-option>
-        @for (base of databaseOptions; track base.id) {
-          <mat-option [value]="base">{{base.name}}</mat-option>
-        }
-      </mat-select>
-      <mat-hint>Database id: {{databases['good']()?.id}}</mat-hint>
-      <mat-error>Please choose Database</mat-error>
-    </mat-form-field>
-    }
-    <mat-form-field appearance="outline">
-      <mat-label>Support database</mat-label>
-      <mat-select [(ngModel)]="databases['support']" required="true" [disabled]="!userId || !!authErrorMessage" (selectionChange)="databaseSelected($event)">
-        <mat-option>--</mat-option>
-        @for (base of databaseOptions; track base.id) {
-        <mat-option [value]="base">{{base.name}}</mat-option>
-        }
-      </mat-select>
-      <mat-hint>Database id: {{databases['support']()?.id}}</mat-hint>
-      <mat-error>Please choose Database</mat-error>
-    </mat-form-field>
-    <div style="display: flex;flex-direction: column;align-self: center">
-      <mat-radio-group [(ngModel)]="savingMode" (change)="clearDatabaseSet()" aria-label="Select an option">
-        <mat-radio-button value="DEFAULT">Default</mat-radio-button>
-        <mat-radio-button value="DENORMALIZED">Denormalized</mat-radio-button>
-      </mat-radio-group>
-      <mat-checkbox (change)="toggleCommaToDotTranslation($event)" checked="true"
-                    matTooltip='For example: "0,5" will be searched as "0.5"'
-                    [matTooltipShowDelay]="1000">Use "," as "." in search
-      </mat-checkbox>
-    </div>
-  </mat-toolbar>
+      @if (savingMode() == SavingMode.DENORMALIZED) {
+        <mat-form-field appearance="outline">
+          <mat-label>Refugees database</mat-label>
+          <mat-select [(ngModel)]="databases['refugee']" required="true" [disabled]="!userId || !!authErrorMessage"
+                      (selectionChange)="databaseSelected($event)">
+            <mat-option>&#45;&#45;</mat-option>
+            @for (base of databaseOptions; track base.id) {
+              <mat-option [value]="base">{{ base.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Database id: {{ databases['refugee']()?.id }}</mat-hint>
+          <mat-error>Please choose Database</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Goods database</mat-label>
+          <mat-select [(ngModel)]="databases['good']" required="true" [disabled]="!userId || !!authErrorMessage"
+                      (selectionChange)="databaseSelected($event)">
+            <mat-option>&#45;&#45;</mat-option>
+            @for (base of databaseOptions; track base.id) {
+              <mat-option [value]="base">{{ base.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Database id: {{ databases['good']()?.id }}</mat-hint>
+          <mat-error>Please choose Database</mat-error>
+        </mat-form-field>
+      }
+      <mat-form-field appearance="outline">
+        <mat-label>Support database</mat-label>
+        <mat-select [(ngModel)]="databases['support']" required="true" [disabled]="!userId || !!authErrorMessage"
+                    (selectionChange)="databaseSelected($event)">
+          <mat-option>--</mat-option>
+          @for (base of databaseOptions; track base.id) {
+            <mat-option [value]="base">{{ base.name }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Database id: {{ databases['support']()?.id }}</mat-hint>
+        <mat-error>Please choose Database</mat-error>
+      </mat-form-field>
+      <div class="flag-settings-block">
+        <mat-radio-group [(ngModel)]="savingMode" (change)="clearDatabaseSet()" aria-label="Select an option">
+          <mat-radio-button value="Default">Default</mat-radio-button>
+          <mat-radio-button value="Denormalized">Denormalized</mat-radio-button>
+        </mat-radio-group>
+        <mat-checkbox (change)="toggleCommaToDotTranslation($event)" checked="true"
+                      matTooltip='For example: "0,5" will be searched as "0.5"'
+                      [matTooltipShowDelay]="1000">Use "," as "." in search
+        </mat-checkbox>
+      </div>
+    </mat-toolbar>
+  </div>
 </mat-expansion-panel>
 
 
