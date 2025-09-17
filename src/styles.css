@@ -5,6 +5,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-top: 10px;
 }
 
+mat-card.surface-color, surface-color{
+  background-color: var(--mat-sys-surface);
+}
+
 .mat-toolbar.header-toolbar {
   align-items: baseline;
 }
@@ -17,8 +21,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   flex: 1 1 auto;
 }
 
-.field-container-text-size {
-  font-size: var(--mat-form-field-container-text-size);
+.field-label-text-size {
+  font-size: var(--mat-sys-title-medium-size);
 }
 
 .margin-05 {
@@ -26,12 +30,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .form-field-progress-spinner {
-  max-height: calc(var(--mat-form-field-container-height) * 0.75);
-  max-width: var(--mat-form-field-container-height);
+  max-height: var(--mat-sys-display-small-size);
+  max-width: var(--mat-sys-display-small-size);
+  margin:0 0.5rem
 }
 
 button.attached-button {
-  height: var(--mat-form-field-container-height);
+  height: calc(var(--mat-sys-body-large-line-height) + 16px * 2);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   padding: 0;
@@ -43,9 +48,9 @@ button.attached-button {
 }
 
 .number-field div.mat-mdc-form-field-infix, .number-label {
-  width: calc(var(--mat-form-field-container-text-size) * 3);
-  font-size: calc(var(--mat-form-field-container-text-size) * 1.5);
-  max-height: var(--mat-form-field-container-text-line-height);
+  width: calc(var(--mat-sys-body-large-size) * 3);
+  font-size: calc(var(--mat-sys-body-large-size) * 1.5);
+  max-height: var(--mat-sys-body-large-line-height);
 }
 
 input[type="number"] {

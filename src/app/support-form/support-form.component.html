@@ -2,7 +2,7 @@
   <div class="support-form-column">
     <app-airtable-api-settings></app-airtable-api-settings>
 
-    <mat-card class="panel-margin">
+    <mat-card class="panel-margin surface-color">
       <form [formGroup]="supportForm" #formDirective="ngForm">
       <mat-card-header>
         <mat-card-title>Humanitarian aid giving form</mat-card-title>
@@ -48,7 +48,7 @@
           <mat-toolbar-row>
             <button mat-raised-button (click)="addGoodEntrySlot()">Add Good Line</button>
             <span class="flex-spacer"></span>
-            <span class="field-container-text-size margin-05">Family size (* auto): </span>
+            <span class="field-label-text-size margin-05">Family size (* auto): </span>
             <mat-form-field class="number-field transparent-mat-form-field">
               <mat-label class="number-label">{{ displayDefaultFamilySize() }}</mat-label>
               <input matInput type="number" style="text-align: center" [formControl]="familySizeFC">

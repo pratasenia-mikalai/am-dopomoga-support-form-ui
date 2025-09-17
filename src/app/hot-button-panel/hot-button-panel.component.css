@@ -17,7 +17,7 @@
 .hot-button {
   width: 100%;
   height: 100%;
-  border-radius: var(--mat-card-elevated-container-shape)
+  border-radius: var(--mat-sys-corner-medium)
 }
 
 .cdk-drag-preview > mat-card {
@@ -59,9 +59,9 @@
 }
 
 .macro-table-tooltip {
-  font-size: var(--mat-button-text-label-text-size);
-  font-weight: var(--mat-button-text-label-text-weight);
-  border-radius: var(--mat-tooltip-container-shape);
-  color: var(--mat-tooltip-supporting-text-color);
-  background-color: var(--mat-tooltip-container-color);
+  font-size: var(--mat-sys-label-large-size);
+  font-weight: var(--mat-sys-label-large-weight);
+  border-radius: var(--mat-sys-corner-extra-small);
+  color: var(--mat-sys-on-secondary);
+  background-color: var(--mat-sys-secondary);
 }

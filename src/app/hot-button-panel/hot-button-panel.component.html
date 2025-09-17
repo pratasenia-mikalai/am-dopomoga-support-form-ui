@@ -24,7 +24,7 @@
         <button mat-stroked-button class="attached-button" [disabled]="!databaseId || !editMode" (click)="addHotButton()">Add</button>
     </div>
     <span class="flex-spacer"></span>
-    <button mat-flat-button [disabled]="!databaseId" (click)="saveHotButtonsPanel()">Save</button>
+    <button mat-flat-button class="margin-05" [disabled]="!databaseId" (click)="saveHotButtonsPanel()">Save</button>
     <button mat-stroked-button [disabled]="!databaseId" (click)="loadHotButtonsPanel()">Load</button>
   </mat-toolbar>
 </mat-expansion-panel>

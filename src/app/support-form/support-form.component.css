@@ -22,7 +22,6 @@
 
 mat-toolbar-row {
   height: auto;
-  min-height: var(--mat-toolbar-standard-height);
 }
 
 .form-header-toolbar > mat-toolbar-row > mat-form-field {
@@ -30,11 +29,11 @@ mat-toolbar-row {
 }
 
 .transparent-mat-form-field {
-  --mat-form-field-filled-container-color: initial;
+  --mat-sys-surface-variant: initial;
 }
 
 .progress-bar-container {
-  min-height: max(var(--mat-progress-bar-track-height), var(--mat-progress-bar-active-indicator-height));
+  min-height: 4px;
 }
 
 

@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, output} from "@angular/core";
-import {MatListItem} from "@angular/material/list";
 import {MatFormField} from "@angular/material/form-field";
 import {
   MatAutocomplete,
@@ -27,7 +26,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 @Component({
     selector: "app-support-good-entry",
     imports: [
-        MatListItem,
         MatFormField,
         MatAutocomplete,
         ReactiveFormsModule,
