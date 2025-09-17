@@ -30,11 +30,11 @@ mat-toolbar-row {
 }
 
 .transparent-mat-form-field {
-  --mdc-filled-text-field-container-color: initial;
+  --mat-form-field-filled-container-color: initial;
 }
 
 .progress-bar-container {
-  min-height: max(var(--mdc-linear-progress-track-height), var(--mdc-linear-progress-active-indicator-height));
+  min-height: max(var(--mat-progress-bar-track-height), var(--mat-progress-bar-active-indicator-height));
 }
 
 
