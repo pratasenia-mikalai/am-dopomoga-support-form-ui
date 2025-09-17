@@ -35,33 +35,32 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatExpansionModule} from '@angular/material/expansion';
 
 @Component({
-  selector: 'app-hot-button-panel',
-  standalone: true,
-  imports: [
-    MatGridListModule,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIcon,
-    ReactiveFormsModule,
-    FormsModule,
-    MatAutocomplete,
-    MatAutocompleteModule,
-    MatOption,
-    AsyncPipe,
-    CdkDropList,
-    CdkDrag,
-    CdkDropListGroup,
-    MatProgressSpinnerModule,
-    SlicePipe,
-    OverlayModule,
-    MatToolbarModule,
-    MatExpansionModule
-  ],
-  templateUrl: './hot-button-panel.component.html',
-  styleUrl: './hot-button-panel.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-hot-button-panel',
+    imports: [
+        MatGridListModule,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIcon,
+        ReactiveFormsModule,
+        FormsModule,
+        MatAutocomplete,
+        MatAutocompleteModule,
+        MatOption,
+        AsyncPipe,
+        CdkDropList,
+        CdkDrag,
+        CdkDropListGroup,
+        MatProgressSpinnerModule,
+        SlicePipe,
+        OverlayModule,
+        MatToolbarModule,
+        MatExpansionModule
+    ],
+    templateUrl: './hot-button-panel.component.html',
+    styleUrl: './hot-button-panel.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HotButtonPanelComponent implements OnInit, AfterViewInit {
 

@@ -37,31 +37,30 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.service";
 
 @Component({
-  selector: 'app-support-form',
-  standalone: true,
-  providers: [provideMomentDateAdapter(_DATE_FORMAT, {useUtc: true})],
-  imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatDivider,
-    MatInputModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatAutocompleteModule,
-    MatDatepickerModule,
-    AsyncPipe,
-    ReactiveFormsModule,
-    SupportGoodEntryComponent,
-    MatToolbarModule,
-    HotButtonPanelComponent,
-    AirtableApiSettingsComponent,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    JsonPipe
-  ],
-  templateUrl: './support-form.component.html',
-  styleUrl: './support-form.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-support-form',
+    providers: [provideMomentDateAdapter(_DATE_FORMAT, { useUtc: true })],
+    imports: [
+        MatCardModule,
+        MatButtonModule,
+        MatDivider,
+        MatInputModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatAutocompleteModule,
+        MatDatepickerModule,
+        AsyncPipe,
+        ReactiveFormsModule,
+        SupportGoodEntryComponent,
+        MatToolbarModule,
+        HotButtonPanelComponent,
+        AirtableApiSettingsComponent,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
+        JsonPipe
+    ],
+    templateUrl: './support-form.component.html',
+    styleUrl: './support-form.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SupportFormComponent implements OnInit {
 

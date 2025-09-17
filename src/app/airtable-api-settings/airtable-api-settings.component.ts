@@ -16,12 +16,11 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.service";
 
 @Component({
-  selector: 'app-airtable-api-settings',
-  standalone: true,
-  imports: [FormsModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule],
-  templateUrl: './airtable-api-settings.component.html',
-  styleUrl: './airtable-api-settings.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-airtable-api-settings',
+    imports: [FormsModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule],
+    templateUrl: './airtable-api-settings.component.html',
+    styleUrl: './airtable-api-settings.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AirtableApiSettingsComponent {
 

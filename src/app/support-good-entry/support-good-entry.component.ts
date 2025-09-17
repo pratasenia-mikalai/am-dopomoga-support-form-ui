@@ -25,25 +25,24 @@ import {AirtableClientReadService} from "../airtable-api/airtable-client-read.se
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
-  selector: "app-support-good-entry",
-  standalone: true,
-  imports: [
-    MatListItem,
-    MatFormField,
-    MatAutocomplete,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatIcon,
-    MatOption,
-    MatButtonModule,
-    AsyncPipe,
-    JsonPipe,
-    MatProgressSpinnerModule
-  ],
-  templateUrl: "./support-good-entry.component.html",
-  styleUrl: "./support-good-entry.component.css",
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "app-support-good-entry",
+    imports: [
+        MatListItem,
+        MatFormField,
+        MatAutocomplete,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        MatIcon,
+        MatOption,
+        MatButtonModule,
+        AsyncPipe,
+        JsonPipe,
+        MatProgressSpinnerModule
+    ],
+    templateUrl: "./support-good-entry.component.html",
+    styleUrl: "./support-good-entry.component.css",
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SupportGoodEntryComponent implements OnInit, OnDestroy {
   @Input("formGroup") goodEntryFormGroup!: FormGroup
