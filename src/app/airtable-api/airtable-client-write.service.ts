@@ -1,4 +1,4 @@
-import {Injectable, signal, WritableSignal} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {
   AirtableDraftEntity,
@@ -21,12 +21,12 @@ import {AirtableCreateEntityRequest, AirtableEntityResponse, SavingMode} from ".
 export class AirtableClientWriteService {
 
   savingMode: SavingMode = SavingMode.DEFAULT
-  airtableSupportDatabase: WritableSignal<Base | undefined> = signal(undefined);
+  airtableSupportDatabase?: Base;
 
   constructor(private http: HttpClient) { }
 
   private supportApiUrl(): string {
-    return `${_API_ROOT}/${this.airtableSupportDatabase()?.id}`
+    return `${_API_ROOT}/${this.airtableSupportDatabase?.id}`
   }
 
   async saveSupport(supportEntry: SupportEntry, goodEntries: GoodEntry[]): Promise<boolean> {
@@ -95,7 +95,7 @@ export class AirtableClientWriteService {
   }
 
   private createSupport<T extends Support | SupportDenormalized>(request: AirtableCreateEntityRequest<T>) {
-    if (!this.airtableSupportDatabase()) return of([])
+    if (!this.airtableSupportDatabase) return of([])
 
     return this.http.post<AirtableEntityResponse<T>>(`${this.supportApiUrl()}/Support`, request)
       .pipe(
@@ -107,7 +107,7 @@ export class AirtableClientWriteService {
   }
 
   private createMinuses(minuses: AirtableDraftEntity<Minus>[]): Observable<never[] | AirtableEntity<Minus>[]> {
-    if (!this.airtableSupportDatabase()) return of([])
+    if (!this.airtableSupportDatabase) return of([])
 
     const chunks: AirtableDraftEntity<Minus>[][] = minuses.reduce((result: AirtableDraftEntity<Minus>[][], _, index) =>
       (index % 10 === 0 ? [...result, minuses.slice(index, index + 10)] : result), []);
@@ -123,7 +123,7 @@ export class AirtableClientWriteService {
   }
 
   private requestCreateMinuses(request: AirtableCreateEntityRequest<Minus>) {
-    if (!this.airtableSupportDatabase()) return of([])
+    if (!this.airtableSupportDatabase) return of([])
 
     return this.http.post<AirtableEntityResponse<Minus>>(`${this.supportApiUrl()}/Minus`, request)
       .pipe(
@@ -134,8 +134,12 @@ export class AirtableClientWriteService {
         map(it => it.records))
   }
 
-  setSupportDatabase(base: Base) {
-    this.airtableSupportDatabase.set(base)
+  setSavingMode(mode: SavingMode) {
+    this.savingMode = mode
+  }
+
+  setSupportDatabase(base?: Base) {
+    this.airtableSupportDatabase = base
   }
 
 }

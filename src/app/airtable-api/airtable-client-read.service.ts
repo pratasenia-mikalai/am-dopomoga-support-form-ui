@@ -10,7 +10,7 @@ import {AirtableEntityResponse} from "./model";
 })
 export class AirtableClientReadService {
 
-  airtableRefugeeDatabase: WritableSignal<Base | undefined> = signal(undefined);
+  airtableRefugeeDatabase?: Base;
   airtableGoodDatabase: WritableSignal<Base | undefined> = signal(undefined);
 
   private translateCommaToDotInSearch: boolean = true
@@ -32,9 +32,9 @@ export class AirtableClientReadService {
   }
 
   searchRefugee(search: string): Observable<AirtableEntity<Refugee>[]> {
-    if (!this.airtableRefugeeDatabase()) return of([])
+    if (!this.airtableRefugeeDatabase) return of([])
 
-    return this.http.get<AirtableEntityResponse<Refugee>>(`${_API_ROOT}/${this.airtableRefugeeDatabase()?.id}/Refugees`, this.searchRequestParams(search, "Name"))
+    return this.http.get<AirtableEntityResponse<Refugee>>(`${_API_ROOT}/${this.airtableRefugeeDatabase?.id}/Refugees`, this.searchRequestParams(search, "Name"))
       .pipe(
         catchError(err => {
           console.log(err);
@@ -43,11 +43,11 @@ export class AirtableClientReadService {
         map(it => it.records))
   }
 
-  setRefugeeDatabase(base: Base) {
-    this.airtableRefugeeDatabase.set(base)
+  setRefugeeDatabase(base?: Base) {
+    this.airtableRefugeeDatabase = base
   }
 
-  setGoodDatabase(base: Base) {
+  setGoodDatabase(base?: Base) {
     this.airtableGoodDatabase.set(base)
   }
 

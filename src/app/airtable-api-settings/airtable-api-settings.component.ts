@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, signal, WritableSignal} from '@angular/core';
 import {AirtableClientReadService} from "../airtable-api/airtable-client-read.service";
 import {AuthService} from "../airtable-api/auth.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -14,10 +14,12 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {AirtableClientWriteService} from "../airtable-api/airtable-client-write.service";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {SavingMode} from "../airtable-api/model";
 
 @Component({
     selector: 'app-airtable-api-settings',
-    imports: [FormsModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule],
+  imports: [FormsModule, MatToolbarModule, MatFormFieldModule, MatInputModule, MatButton, MatSelectModule, MatCheckboxModule, MatExpansionModule, MatIcon, MatTooltipModule, MatRadioGroup, MatRadioButton],
     templateUrl: './airtable-api-settings.component.html',
     styleUrl: './airtable-api-settings.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -32,9 +34,13 @@ export class AirtableApiSettingsComponent {
   authErrorMessage?: string
   authErrorStateMatcher: ErrorStateMatcher
 
-  database?: Base
   databaseOptions: Base[] = []
-  databaseOptionsSpinner: boolean = false
+  databases: BasesNamedArray = {
+    "good": signal(undefined),
+    "refugee": signal(undefined),
+    "support": signal(undefined)
+  }
+  savingMode: WritableSignal<SavingMode> = signal(SavingMode.DEFAULT)
 
   constructor(private apiReadClient: AirtableClientReadService,
               private apiWriteClient: AirtableClientWriteService,
@@ -43,6 +49,18 @@ export class AirtableApiSettingsComponent {
       return this.authErrorMessage
     }
     this.authErrorStateMatcher = new OnValueExistsErrorStateMatcher(authErrorMessageProducer)
+    effect(() => {
+      this.apiReadClient.setRefugeeDatabase(this.databases["refugee"]())
+    });
+    effect(() => {
+      this.apiReadClient.setGoodDatabase(this.databases["good"]())
+    });
+    effect(() => {
+      this.apiWriteClient.setSupportDatabase(this.databases["support"]())
+    });
+    effect(() => {
+      this.apiWriteClient.setSavingMode(this.savingMode())
+    });
   }
 
   toggleCommaToDotTranslation(event: any) {
@@ -87,15 +105,31 @@ export class AirtableApiSettingsComponent {
       })
   }
 
-  databaseSelected(event: any) {
-    this.apiReadClient.setGoodDatabase(event.value)
-    this.apiReadClient.setRefugeeDatabase(event.value)
-    this.apiWriteClient.setSupportDatabase(event.value)
-    this.headerExpanded = false
+  clearDatabaseSet() {
+    Object.keys(this.databases)
+      .forEach(key => this.databases[key].set(undefined))
   }
+
+  databaseSelected(event: any) {
+    if (this.savingMode() == SavingMode.DEFAULT) {
+      Object.keys(this.databases)
+        .forEach(key => this.databases[key].set(event.value))
+    }
+    if (this.checkDatabaseSet()) {
+      this.headerExpanded = false
+    }
+  }
+
+  checkDatabaseSet(): boolean {
+    return !Object.keys(this.databases).some(key => !this.databases[key]())
+  }
+
+  protected readonly SavingMode = SavingMode;
 }
 
-export class OnValueExistsErrorStateMatcher implements ErrorStateMatcher {
+type BasesNamedArray = { [key: string]: WritableSignal<Base | undefined> }
+
+class OnValueExistsErrorStateMatcher implements ErrorStateMatcher {
 
   constructor(private valueProducer: () => any) {
   }
@@ -104,3 +138,5 @@ export class OnValueExistsErrorStateMatcher implements ErrorStateMatcher {
     return !!this.valueProducer();
   }
 }
+
+
